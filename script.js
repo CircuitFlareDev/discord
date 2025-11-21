@@ -11,16 +11,24 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
 
+// ---------------- Elements ----------------
 const loginScreen = document.getElementById('loginScreen');
 const chatScreen = document.getElementById('chatScreen');
-const usernameInput = document.getElementById('usernameInput');
-const enterBtn = document.getElementById('enterBtn');
-const currentUser = document.getElementById('currentUser');
+const emailInput = document.getElementById('emailInput');
+const passwordInput = document.getElementById('passwordInput');
+const loginBtn = document.getElementById('loginBtn');
+const registerBtn = document.getElementById('registerBtn');
+const currentUserSpan = document.getElementById('currentUser');
 
 const serverList = document.getElementById('serverList');
 const newServerName = document.getElementById('newServerName');
 const addServerBtn = document.getElementById('addServerBtn');
+const inviteCodeInput = document.getElementById('inviteCodeInput');
+const joinServerBtn = document.getElementById('joinServerBtn');
 
 const channelList = document.getElementById('channelList');
 const newChannelName = document.getElementById('newChannelName');
@@ -37,27 +45,56 @@ let username = '';
 let currentServer = '';
 let currentChannel = '';
 
-// Enter chat
-enterBtn.addEventListener('click', () => {
-  const name = usernameInput.value.trim();
-  if(name){
-    username = name;
-    currentUser.textContent = username;
-    loginScreen.style.display = 'none';
-    chatScreen.style.display = 'flex';
-    addUserToOnlineList();
-    loadServers();
-  } else alert('Enter username!');
+// ---------------- Auth ----------------
+loginBtn.addEventListener('click', () => {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  auth.signInWithEmailAndPassword(email, password)
+    .then(user => {
+      username = user.user.email;
+      currentUserSpan.textContent = username;
+      loginScreen.style.display = 'none';
+      chatScreen.style.display = 'flex';
+      addUserToOnlineList();
+      loadServers();
+    })
+    .catch(err => alert(err.message));
+});
+
+registerBtn.addEventListener('click', () => {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(user => alert('Registered! You can now log in.'))
+    .catch(err => alert(err.message));
 });
 
 // ---------------- Servers ----------------
 addServerBtn.addEventListener('click', () => {
   const name = newServerName.value.trim();
   if(name){
-    db.ref('servers/'+name).set({ created: Date.now() });
+    const inviteCode = Math.random().toString(36).substring(2,8);
+    db.ref('servers/'+name).set({ created: Date.now(), invite: inviteCode });
+    alert(`Server "${name}" created! Invite code: ${inviteCode}`);
     newServerName.value = '';
     loadServers();
   }
+});
+
+joinServerBtn.addEventListener('click', () => {
+  const code = inviteCodeInput.value.trim();
+  db.ref('servers').once('value', snapshot => {
+    const data = snapshot.val();
+    for(let server in data){
+      if(data[server].invite === code){
+        currentServer = server;
+        loadChannels();
+        alert(`Joined server: ${server}`);
+        return;
+      }
+    }
+    alert('Invalid invite code!');
+  });
 });
 
 function loadServers(){
