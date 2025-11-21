@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   background: #36393f;
   color: #fff;
 }
@@ -11,14 +11,18 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
+  background: #2f3136;
+}
+
+.login-screen input, .login-screen button {
+  margin: 10px 0;
 }
 
 .login-screen input {
   padding: 10px;
-  margin: 10px 0;
+  width: 220px;
   border-radius: 5px;
   border: none;
-  width: 200px;
 }
 
 .login-screen button {
@@ -34,13 +38,13 @@ body {
   height: 100vh;
 }
 
-/* Servers & Channels & Users */
+/* Servers, Channels, Users */
 .servers, .channels, .users {
-  background: #2f3136;
   padding: 10px;
-  flex: 0 0 150px;
+  background: #2f3136;
   display: flex;
   flex-direction: column;
+  flex: 0 0 180px;
 }
 
 .servers h3, .channels h3, .users h3 {
@@ -55,13 +59,13 @@ body {
 }
 
 .servers li, .channels li, .users li {
-  padding: 5px;
+  padding: 6px 10px;
   cursor: pointer;
+  border-radius: 5px;
 }
 
 .servers li:hover, .channels li:hover {
   background: #40444b;
-  border-radius: 5px;
 }
 
 /* Chat Area */
@@ -73,11 +77,10 @@ body {
 }
 
 .chat-area header {
-  padding: 10px;
-  background: #2f3136;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  padding: 10px;
+  background: #2f3136;
 }
 
 .messages {
@@ -107,8 +110,8 @@ body {
 
 .send-message button {
   padding: 10px;
-  background: #7289da;
   border: none;
   border-radius: 0 0 5px 0;
+  background: #7289da;
   cursor: pointer;
 }
