@@ -1,0 +1,114 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #36393f;
+  color: #fff;
+}
+
+.login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login-screen input {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: none;
+  width: 200px;
+}
+
+.login-screen button {
+  padding: 10px 20px;
+  background: #7289da;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chat-screen {
+  display: flex;
+  height: 100vh;
+}
+
+/* Servers & Channels & Users */
+.servers, .channels, .users {
+  background: #2f3136;
+  padding: 10px;
+  flex: 0 0 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.servers h3, .channels h3, .users h3 {
+  margin-bottom: 10px;
+}
+
+.servers ul, .channels ul, .users ul {
+  list-style: none;
+  padding: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.servers li, .channels li, .users li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.servers li:hover, .channels li:hover {
+  background: #40444b;
+  border-radius: 5px;
+}
+
+/* Chat Area */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #36393f;
+}
+
+.chat-area header {
+  padding: 10px;
+  background: #2f3136;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background: #36393f;
+}
+
+.message {
+  margin-bottom: 8px;
+  background: #40444b;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.send-message {
+  display: flex;
+}
+
+.send-message input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 0 0 0 5px;
+}
+
+.send-message button {
+  padding: 10px;
+  background: #7289da;
+  border: none;
+  border-radius: 0 0 5px 0;
+  cursor: pointer;
+}
