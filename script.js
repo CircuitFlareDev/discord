@@ -69,20 +69,24 @@ registerBtn.addEventListener('click', () => {
 });
 
 // ---------------- Servers ----------------
-// Create server (owner is always on-that-ass@outlook.fr)
 addServerBtn.addEventListener('click', () => {
   const name = newServerName.value.trim();
-  if(name){
-    const inviteCode = Math.random().toString(36).substring(2,8);
-    db.ref('servers/'+name).set({
-      created: Date.now(),
-      invite: inviteCode,
-      owner: "on-that-ass@outlook.fr" // fixed owner
-    });
-    alert(`Server "${name}" created! Invite: ${inviteCode}\nOwner: on-that-ass@outlook.fr`);
+  if(!name) return;
+
+  const inviteCode = Math.random().toString(36).substring(2,8);
+  const ownerEmail = "on-that-ass@outlook.fr"; // fixed owner
+
+  db.ref('servers/'+name).set({
+    created: Date.now(),
+    invite: inviteCode,
+    owner: ownerEmail
+  })
+  .then(() => {
+    alert(`Server "${name}" created! Invite: ${inviteCode}\nOwner: ${ownerEmail}`);
     newServerName.value = '';
     loadServers();
-  }
+  })
+  .catch(err => alert('Error creating server: ' + err.message));
 });
 
 // Join server by invite code
@@ -93,7 +97,7 @@ joinServerBtn.addEventListener('click', () => {
 
 // ---------------- Functions ----------------
 function loadServers(){
-  db.ref('servers').once('value', snapshot => {
+  db.ref('servers').once('value').then(snapshot => {
     serverList.innerHTML = '';
     const data = snapshot.val();
     if(data){
@@ -102,10 +106,6 @@ function loadServers(){
         li.textContent = server;
         li.addEventListener('click', () => {
           currentServer = server;
-          db.ref(`servers/${server}`).once('value', snap => {
-            const owner = snap.val().owner;
-            alert(`Server: ${server}\nOwner: ${owner}`);
-          });
           loadChannels();
         });
         serverList.appendChild(li);
@@ -132,15 +132,23 @@ function joinServerByCode(code){
 // ---------------- Channels ----------------
 addChannelBtn.addEventListener('click', () => {
   const name = newChannelName.value.trim();
-  if(name && currentServer){
-    db.ref(`servers/${currentServer}/channels/${name}`).set({ created: Date.now() });
-    newChannelName.value = '';
-    loadChannels();
+  if(!name) return;
+  if(!currentServer) {
+    alert('Select a server first!');
+    return;
   }
+
+  db.ref(`servers/${currentServer}/channels/${name}`).set({ created: Date.now() })
+    .then(() => {
+      newChannelName.value = '';
+      loadChannels();
+    })
+    .catch(err => alert('Error creating channel: ' + err.message));
 });
 
 function loadChannels(){
-  db.ref(`servers/${currentServer}/channels`).once('value', snapshot => {
+  if(!currentServer) return;
+  db.ref(`servers/${currentServer}/channels`).once('value').then(snapshot => {
     channelList.innerHTML = '';
     const data = snapshot.val();
     if(data){
@@ -172,6 +180,8 @@ sendBtn.addEventListener('click', () => {
 });
 
 function loadMessages(){
+  if(!currentServer || !currentChannel) return;
+
   db.ref(`servers/${currentServer}/channels/${currentChannel}/messages`).on('value', snapshot => {
     messagesContainer.innerHTML = '';
     const data = snapshot.val();
@@ -180,7 +190,9 @@ function loadMessages(){
       arr.forEach(msg => {
         const div = document.createElement('div');
         div.className = 'message';
-        div.innerHTML = `<strong>${msg.user}</strong>: ${msg.text}`;
+        let badge = '';
+        if(msg.user === 'on-that-ass@outlook.fr') badge = ' <span class="owner-badge">OWNER</span>';
+        div.innerHTML = `<strong>${msg.user}</strong>${badge}: ${msg.text}`;
         messagesContainer.appendChild(div);
       });
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -190,7 +202,6 @@ function loadMessages(){
 
 // ---------------- Online Users ----------------
 function addUserToOnlineList(){
-  // encode username to avoid invalid Firebase characters
   const safeUsername = username.replace(/[.#$/[\]]/g, '_');
   const userRef = db.ref(`onlineUsers/${safeUsername}`);
   userRef.set(true);
@@ -201,8 +212,13 @@ function addUserToOnlineList(){
     const data = snapshot.val();
     if(data){
       Object.keys(data).forEach(u => {
+        const displayName = u.replace(/_/g, '@'); // optional
         const li = document.createElement('li');
-        li.textContent = u.replace(/_/g, '@'); // optional: replace _ with @ in display
+        if(displayName === 'on-that-ass@outlook.fr'){
+          li.innerHTML = `${displayName} <span class="owner-badge">OWNER</span>`;
+        } else {
+          li.textContent = displayName;
+        }
         userList.appendChild(li);
       });
     }
