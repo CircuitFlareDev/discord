@@ -69,6 +69,7 @@ registerBtn.addEventListener('click', () => {
 });
 
 // ---------------- Servers ----------------
+// Create server (owner is always on-that-ass@outlook.fr)
 addServerBtn.addEventListener('click', () => {
   const name = newServerName.value.trim();
   if(name){
@@ -76,7 +77,7 @@ addServerBtn.addEventListener('click', () => {
     db.ref('servers/'+name).set({
       created: Date.now(),
       invite: inviteCode,
-      owner: "on-that-ass@outlook.fr"
+      owner: "on-that-ass@outlook.fr" // fixed owner
     });
     alert(`Server "${name}" created! Invite: ${inviteCode}\nOwner: on-that-ass@outlook.fr`);
     newServerName.value = '';
@@ -84,6 +85,7 @@ addServerBtn.addEventListener('click', () => {
   }
 });
 
+// Join server by invite code
 joinServerBtn.addEventListener('click', () => {
   const code = inviteCodeInput.value.trim();
   joinServerByCode(code);
@@ -188,7 +190,9 @@ function loadMessages(){
 
 // ---------------- Online Users ----------------
 function addUserToOnlineList(){
-  const userRef = db.ref(`onlineUsers/${username}`);
+  // encode username to avoid invalid Firebase characters
+  const safeUsername = username.replace(/[.#$/[\]]/g, '_');
+  const userRef = db.ref(`onlineUsers/${safeUsername}`);
   userRef.set(true);
   userRef.onDisconnect().remove();
 
@@ -198,7 +202,7 @@ function addUserToOnlineList(){
     if(data){
       Object.keys(data).forEach(u => {
         const li = document.createElement('li');
-        li.textContent = u;
+        li.textContent = u.replace(/_/g, '@'); // optional: replace _ with @ in display
         userList.appendChild(li);
       });
     }
