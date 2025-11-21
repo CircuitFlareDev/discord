@@ -5,16 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mini Discord Clone</title>
   <link rel="stylesheet" href="style.css">
+  
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
-  <!-- Login Screen -->
+  <!-- Login/Register -->
   <div class="login-screen" id="loginScreen">
-    <h2>Welcome to Mini Discord Clone</h2>
-    <input type="text" id="usernameInput" placeholder="Enter your username">
-    <button id="enterBtn">Enter</button>
+    <h2>Login / Register</h2>
+    <input type="email" id="emailInput" placeholder="Email">
+    <input type="password" id="passwordInput" placeholder="Password">
+    <button id="loginBtn">Login</button>
+    <button id="registerBtn">Register</button>
   </div>
 
   <!-- Chat Screen -->
@@ -23,7 +27,9 @@
       <h3>Servers</h3>
       <ul id="serverList"></ul>
       <input type="text" id="newServerName" placeholder="New server">
-      <button id="addServerBtn">Add Server</button>
+      <button id="addServerBtn">Create Server</button>
+      <input type="text" id="inviteCodeInput" placeholder="Invite code">
+      <button id="joinServerBtn">Join Server</button>
     </aside>
 
     <aside class="channels">
