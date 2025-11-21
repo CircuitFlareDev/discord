@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Discord Clone</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <h2>Welcome to Mini Discord Clone</h2>
+    <input type="text" id="usernameInput" placeholder="Enter your username">
+    <button id="enterBtn">Enter</button>
+  </div>
+
+  <!-- Chat Screen -->
+  <div class="chat-screen" id="chatScreen" style="display:none;">
+    <aside class="servers">
+      <h3>Servers</h3>
+      <ul id="serverList"></ul>
+      <input type="text" id="newServerName" placeholder="New server">
+      <button id="addServerBtn">Add Server</button>
+    </aside>
+
+    <aside class="channels">
+      <h3>Channels</h3>
+      <ul id="channelList"></ul>
+      <input type="text" id="newChannelName" placeholder="New channel">
+      <button id="addChannelBtn">Add Channel</button>
+    </aside>
+
+    <main class="chat-area">
+      <header>
+        <h2 id="currentChannelName">Select a channel</h2>
+        <span id="currentUser"></span>
+      </header>
+      <div class="messages" id="messagesContainer"></div>
+      <div class="send-message">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button id="sendBtn">Send</button>
+      </div>
+    </main>
+
+    <aside class="users">
+      <h3>Online Users</h3>
+      <ul id="userList"></ul>
+    </aside>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
