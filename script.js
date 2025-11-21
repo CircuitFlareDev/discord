@@ -55,6 +55,7 @@ loginBtn.addEventListener('click', () => {
       chatScreen.style.display = 'flex';
       addUserToOnlineList();
       loadServers();
+      checkInviteInURL();
     })
     .catch(err => alert(err.message));
 });
@@ -72,8 +73,12 @@ addServerBtn.addEventListener('click', () => {
   const name = newServerName.value.trim();
   if(name){
     const inviteCode = Math.random().toString(36).substring(2,8);
-    db.ref('servers/'+name).set({ created: Date.now(), invite: inviteCode });
-    alert(`Server "${name}" created! Invite code: ${inviteCode}`);
+    db.ref('servers/'+name).set({
+      created: Date.now(),
+      invite: inviteCode,
+      owner: "on-that-ass@outlook.fr"
+    });
+    alert(`Server "${name}" created! Invite: ${inviteCode}\nOwner: on-that-ass@outlook.fr`);
     newServerName.value = '';
     loadServers();
   }
@@ -81,6 +86,33 @@ addServerBtn.addEventListener('click', () => {
 
 joinServerBtn.addEventListener('click', () => {
   const code = inviteCodeInput.value.trim();
+  joinServerByCode(code);
+});
+
+// ---------------- Functions ----------------
+function loadServers(){
+  db.ref('servers').once('value', snapshot => {
+    serverList.innerHTML = '';
+    const data = snapshot.val();
+    if(data){
+      Object.keys(data).forEach(server => {
+        const li = document.createElement('li');
+        li.textContent = server;
+        li.addEventListener('click', () => {
+          currentServer = server;
+          db.ref(`servers/${server}`).once('value', snap => {
+            const owner = snap.val().owner;
+            alert(`Server: ${server}\nOwner: ${owner}`);
+          });
+          loadChannels();
+        });
+        serverList.appendChild(li);
+      });
+    }
+  });
+}
+
+function joinServerByCode(code){
   db.ref('servers').once('value', snapshot => {
     const data = snapshot.val();
     for(let server in data){
@@ -92,24 +124,6 @@ joinServerBtn.addEventListener('click', () => {
       }
     }
     alert('Invalid invite code!');
-  });
-});
-
-function loadServers(){
-  db.ref('servers').once('value', snapshot => {
-    serverList.innerHTML = '';
-    const data = snapshot.val();
-    if(data){
-      Object.keys(data).forEach(server => {
-        const li = document.createElement('li');
-        li.textContent = server;
-        li.addEventListener('click', () => {
-          currentServer = server;
-          loadChannels();
-        });
-        serverList.appendChild(li);
-      });
-    }
   });
 }
 
@@ -189,4 +203,13 @@ function addUserToOnlineList(){
       });
     }
   });
+}
+
+// ---------------- URL Invite Support ----------------
+function checkInviteInURL(){
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('invite');
+  if(code){
+    joinServerByCode(code);
+  }
 }
